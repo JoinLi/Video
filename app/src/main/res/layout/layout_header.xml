@@ -5,18 +5,20 @@
     android:orientation="horizontal">
 
     <TextView
-        android:id="@+id/text_chengshi"
+        android:id="@+id/text_tv"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_margin="1dp"
         android:layout_weight="1"
         android:background="#FFFFFF"
         android:gravity="center"
+        android:clickable="true"
+        android:focusable="true"
         android:text="电视剧"
         android:textSize="15dp" />
 
     <TextView
-        android:id="@+id/text_time"
+        android:id="@+id/text_movie"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_margin="1dp"
@@ -24,6 +26,8 @@
         android:background="#FFFFFF"
         android:gravity="center"
         android:text="电影"
+        android:clickable="true"
+        android:focusable="true"
         android:textSize="15dp" />
 
 

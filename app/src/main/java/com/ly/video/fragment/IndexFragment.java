@@ -14,7 +14,6 @@ import com.jude.easyrecyclerview.EasyRecyclerView;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
 import com.ly.video.R;
 import com.ly.video.activity.MovieActivity;
-import com.ly.video.activity.PlayMovieActivity;
 import com.ly.video.adapter.PersonAdapter;
 import com.ly.video.bean.InforBean;
 import com.ly.video.bean.ConstantApi;
@@ -94,7 +93,7 @@ public class IndexFragment extends BaseFragment implements RecyclerArrayAdapter.
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(getActivity(), MovieActivity.class);
-                intent.putExtra("url", adapter.getAllData().get(position).getMovie_url());
+                intent.putExtra("url", ConstantApi.Movie_Number_Path+adapter.getAllData().get(position).getMovie_url());
                 startActivity(intent);
             }
         });
@@ -150,7 +149,7 @@ public class IndexFragment extends BaseFragment implements RecyclerArrayAdapter.
 
     private void getMovie() {
         recyclerView.showProgress();
-        String path = ConstantApi.MoviePath + context;
+        String path = ConstantApi.Movie_Sou_Path + context;
         try {
             OkHttpUtils
                     .get()

@@ -1,15 +1,18 @@
 package com.ly.video.fragment;
 
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.view.View;
+import android.widget.TextView;
 
 import com.jude.easyrecyclerview.EasyRecyclerView;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
 import com.ly.video.R;
+import com.ly.video.activity.MovieActivity;
 import com.ly.video.adapter.PersonAdapter;
-import com.ly.video.bean.ConstantApi;
 import com.ly.video.bean.InforBean;
 import com.ly.video.util.LogUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -30,13 +33,27 @@ import okhttp3.Call;
  * @Date: 2016/7/9.
  * @description:
  */
-public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.OnLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
+public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.OnLoadMoreListener, SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
     private EasyRecyclerView recyclerView;
     private PersonAdapter adapter;
     private List<InforBean> list = new ArrayList<InforBean>();
     private int page;
-    public static SouhuFragment newInstance() {
+    private static String tvPaths, moviePaths,mainPaths;
+    private String path;
+    private TextView text_tv, text_movie;
+
+    /**
+     *
+     * @param tvPath  电视剧接口
+     * @param moviePath 电影接口
+     * @param mainPath  观看接口
+     * @return
+     */
+    public static SouhuFragment newInstance(String tvPath, String moviePath,String mainPath) {
         SouhuFragment fragment = new SouhuFragment();
+        tvPaths = tvPath;
+        moviePaths = moviePath;
+        mainPaths=mainPath;
         return fragment;
     }
 
@@ -53,6 +70,8 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
 //        DividerDecoration itemDecoration = new DividerDecoration(Color.GRAY, Util.dip2px(this, 0.5f), Util.dip2px(this, 72), 0);
 //        itemDecoration.setDrawLastItem(false);
 //        recyclerView.addItemDecoration(itemDecoration);
+        text_tv = findView(R.id.text_tv);
+        text_movie = findView(R.id.text_movie);
         adapter = new PersonAdapter(getContext());
         recyclerView.setAdapterWithProgress(adapter);
         adapter.setMore(R.layout.view_more, this);
@@ -72,24 +91,29 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-//                Intent intent = new Intent(MainActivity.this, MovieActivity.class);
-//                intent.putExtra("url", adapter.getAllData().get(position).getMovie_url());
-//                startActivity(intent);
+                Intent intent = new Intent(getContext(), MovieActivity.class);
+                intent.putExtra("url", mainPaths+adapter.getAllData().get(position).getMovie_url());
+                startActivity(intent);
             }
         });
-
+        text_tv.setOnClickListener(this);
+        text_movie.setOnClickListener(this);
+        path = tvPaths;
+        text_tv.setTextColor(getActivity().getColor(R.color.colorPrimary));
         recyclerView.setRefreshListener(this);  //下拉刷新
 
     }
 
     @Override
     protected void initData() {
-        getMovie();
+        onRefresh();
     }
 
     @Override
     public void onLoadMore() {
-        adapter.stopMore();
+        page++;
+        list.clear();
+        getMovie();
     }
 
     @Override
@@ -99,14 +123,36 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
 
     }
 
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.text_tv:
+                text_tv.setTextColor(getActivity().getColor(R.color.colorPrimary));
+                text_movie.setTextColor(getActivity().getColor(R.color.black_normal));
+                path = tvPaths;
+                break;
+            case R.id.text_movie:
+                text_tv.setTextColor(getActivity().getColor(R.color.black_normal));
+                text_movie.setTextColor(getActivity().getColor(R.color.colorPrimary));
+                path = moviePaths;
+                break;
+            default:
+
+                break;
+        }
+        onRefresh();
+    }
 
     private void getMovie() {
-        recyclerView.showProgress();
-        String path = ConstantApi.MoviePath;
+//        recyclerView.showProgress();
+//        String path = ConstantApi.Movie_Qy_Path+page;
         try {
+            if (page == 1) {
+                recyclerView.showProgress();
+            }
+            LogUtil.m("请求地址"+path + page);
             OkHttpUtils
                     .get()
-                    .url(path)
+                    .url(path + page)
                     .build()
                     .execute(new StringCallback() {
                         @Override
@@ -121,14 +167,17 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
                             }
                             Snackbar.make(getView(), getResources().getString(R.string.snackbar_err), Snackbar.LENGTH_LONG)
                                     .show();
+                            LogUtil.m("出错"+call);
                         }
 
                         @Override
                         public void onResponse(String string, int id) {
                             try {
+
                                 if (page == 1) {//暂无数据
                                     adapter.clear();
                                     list.clear();
+
                                 }
 
                                 Document doc = Jsoup.parse(string);
@@ -163,8 +212,10 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
             e.printStackTrace();
 
         }
-
-        recyclerView.cancelLongPress();
+        if (page == 1) {
+            recyclerView.cancelLongPress();
+        }
+//        recyclerView.cancelLongPress();
     }
 
 

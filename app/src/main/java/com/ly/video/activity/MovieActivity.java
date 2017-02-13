@@ -117,7 +117,7 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
 
 
     private void initData() {
-        String path = ConstantApi.Movie_Number_Path + getIntent().getStringExtra("url");
+        String path = getIntent().getStringExtra("url");
         try {
             OkHttpUtils
                     .get()

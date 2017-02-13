@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.ly.video.activity.SettingActivity;
 import com.ly.video.adapter.ViewPagerAdapter;
+import com.ly.video.bean.ConstantApi;
 import com.ly.video.fragment.IndexFragment;
 import com.ly.video.fragment.SouhuFragment;
 
@@ -67,10 +68,10 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(IndexFragment.newInstance(), "首页");
-        adapter.addFragment(SouhuFragment.newInstance(), "搜狐");
-        adapter.addFragment(SouhuFragment.newInstance(), "爱奇艺");
-        adapter.addFragment(SouhuFragment.newInstance(), "乐视");
-        adapter.addFragment(SouhuFragment.newInstance(), "芒果");
+        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Sh_Path,ConstantApi.Movie_Sh_Path,ConstantApi.Qy_Path), "搜狐");
+//        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Qy_Path,ConstantApi.Movie_Qy_Path,ConstantApi.Qy_Path), "爱奇艺");
+//        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Qy_Path,ConstantApi.Movie_Qy_Path,ConstantApi.Qy_Path), "乐视");
+//        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Qy_Path,ConstantApi.Movie_Qy_Path,ConstantApi.Qy_Path), "芒果");
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
         viewPager.setOffscreenPageLimit(adapter.getCount());
