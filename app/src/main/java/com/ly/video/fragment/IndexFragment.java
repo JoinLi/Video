@@ -1,6 +1,7 @@
 package com.ly.video.fragment;
 
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,9 +13,11 @@ import android.widget.ImageView;
 import com.jude.easyrecyclerview.EasyRecyclerView;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
 import com.ly.video.R;
+import com.ly.video.activity.MovieActivity;
+import com.ly.video.activity.PlayMovieActivity;
 import com.ly.video.adapter.PersonAdapter;
 import com.ly.video.bean.InforBean;
-import com.ly.video.util.Constant;
+import com.ly.video.bean.ConstantApi;
 import com.ly.video.util.LogUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -90,9 +93,9 @@ public class IndexFragment extends BaseFragment implements RecyclerArrayAdapter.
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-//                Intent intent = new Intent(MainActivity.this, MovieActivity.class);
-//                intent.putExtra("url", adapter.getAllData().get(position).getMovie_url());
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), MovieActivity.class);
+                intent.putExtra("url", adapter.getAllData().get(position).getMovie_url());
+                startActivity(intent);
             }
         });
         list.clear();
@@ -147,7 +150,7 @@ public class IndexFragment extends BaseFragment implements RecyclerArrayAdapter.
 
     private void getMovie() {
         recyclerView.showProgress();
-        String path = Constant.MoviePath + context;
+        String path = ConstantApi.MoviePath + context;
         try {
             OkHttpUtils
                     .get()

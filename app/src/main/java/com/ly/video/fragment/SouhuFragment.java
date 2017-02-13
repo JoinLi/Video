@@ -4,14 +4,13 @@ package com.ly.video.fragment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.widget.RelativeLayout;
 
 import com.jude.easyrecyclerview.EasyRecyclerView;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
 import com.ly.video.R;
 import com.ly.video.adapter.PersonAdapter;
+import com.ly.video.bean.ConstantApi;
 import com.ly.video.bean.InforBean;
-import com.ly.video.util.Constant;
 import com.ly.video.util.LogUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
@@ -103,7 +102,7 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
 
     private void getMovie() {
         recyclerView.showProgress();
-        String path = Constant.MoviePath;
+        String path = ConstantApi.MoviePath;
         try {
             OkHttpUtils
                     .get()
