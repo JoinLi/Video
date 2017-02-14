@@ -2,6 +2,7 @@ package com.ly.video.fragment;
 
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -13,6 +14,7 @@ import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
 import com.ly.video.R;
 import com.ly.video.activity.MovieActivity;
 import com.ly.video.adapter.PersonAdapter;
+import com.ly.video.bean.ConstantApi;
 import com.ly.video.bean.InforBean;
 import com.ly.video.util.LogUtil;
 import com.zhy.http.okhttp.OkHttpUtils;
@@ -38,22 +40,24 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
     private PersonAdapter adapter;
     private List<InforBean> list = new ArrayList<InforBean>();
     private int page;
-    private static String tvPaths, moviePaths,mainPaths;
+    private String tvPaths, moviePaths, mainPaths;
     private String path;
     private TextView text_tv, text_movie;
+    private int index=1; //标志位，判断是电影还是电视剧
 
     /**
-     *
-     * @param tvPath  电视剧接口
+     * @param tvPath    电视剧接口
      * @param moviePath 电影接口
      * @param mainPath  观看接口
      * @return
      */
-    public static SouhuFragment newInstance(String tvPath, String moviePath,String mainPath) {
+    public static SouhuFragment newInstance(String tvPath, String moviePath, String mainPath) {
         SouhuFragment fragment = new SouhuFragment();
-        tvPaths = tvPath;
-        moviePaths = moviePath;
-        mainPaths=mainPath;
+        Bundle bundle = new Bundle();
+        bundle.putString("tvPath", tvPath);
+        bundle.putString("moviePath", moviePath);
+        bundle.putString("mainPath", mainPath);
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -65,6 +69,12 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
 
     @Override
     protected void initView() {
+        Bundle args = getArguments();
+        if (args != null) {
+            tvPaths = args.getString("tvPath");
+            moviePaths = args.getString("moviePath");
+            mainPaths = args.getString("mainPath");
+        }
         recyclerView = findView(R.id.recyclerView);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false));
 //        DividerDecoration itemDecoration = new DividerDecoration(Color.GRAY, Util.dip2px(this, 0.5f), Util.dip2px(this, 72), 0);
@@ -92,7 +102,9 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
             @Override
             public void onItemClick(int position) {
                 Intent intent = new Intent(getContext(), MovieActivity.class);
-                intent.putExtra("url", mainPaths+adapter.getAllData().get(position).getMovie_url());
+                intent.putExtra("url", mainPaths + adapter.getAllData().get(position).getMovie_url());
+                intent.putExtra("index", index);
+                intent.putExtra("mainPaths", mainPaths);
                 startActivity(intent);
             }
         });
@@ -128,11 +140,13 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
             case R.id.text_tv:
                 text_tv.setTextColor(getActivity().getColor(R.color.colorPrimary));
                 text_movie.setTextColor(getActivity().getColor(R.color.black_normal));
+                index=1;
                 path = tvPaths;
                 break;
             case R.id.text_movie:
                 text_tv.setTextColor(getActivity().getColor(R.color.black_normal));
                 text_movie.setTextColor(getActivity().getColor(R.color.colorPrimary));
+                index=2;
                 path = moviePaths;
                 break;
             default:
@@ -149,7 +163,7 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
             if (page == 1) {
                 recyclerView.showProgress();
             }
-            LogUtil.m("请求地址"+path + page);
+            LogUtil.m("请求地址" + path + page);
             OkHttpUtils
                     .get()
                     .url(path + page)
@@ -167,7 +181,7 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
                             }
                             Snackbar.make(getView(), getResources().getString(R.string.snackbar_err), Snackbar.LENGTH_LONG)
                                     .show();
-                            LogUtil.m("出错"+call);
+                            LogUtil.m("出错" + call);
                         }
 
                         @Override
@@ -186,7 +200,13 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
                                 for (Element element : elements) {
                                     InforBean bean = new InforBean();
                                     bean.setMovie_url(element.select("a").attr("href"));
-                                    bean.setImg_url(element.select("img").attr("src"));
+                                    String imgUrl = element.select("img").attr("src");
+                                    if (imgUrl.trim().startsWith("/")) {
+                                        imgUrl = ConstantApi.Img_Path + imgUrl;
+                                        //添加到html
+                                        element.select("img").attr("src", imgUrl);
+                                    }
+                                    bean.setImg_url(imgUrl);
                                     bean.setTitle(element.select("b").text());
                                     element.select("b").text();
                                     LogUtil.m("链接" + element.select("a").attr("href"));

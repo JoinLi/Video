@@ -22,6 +22,7 @@ import com.ly.video.util.LogUtil;
 import com.ly.video.util.Util;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -42,6 +43,7 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
     private WebView mWebView;
     private List<MovieBean> list = new ArrayList<MovieBean>();
     private int page = 1;
+    private String mainPaths;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
         toolbar.setTitle("视频选择");
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null){
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         recyclerView = (EasyRecyclerView) findViewById(R.id.recyclerView);
@@ -72,6 +74,17 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         mWebView.getView().setOverScrollMode(View.OVER_SCROLL_ALWAYS);
         mWebView.setDrawingCacheEnabled(true);
+        mWebView.setWebViewClient(new WebViewClient(){
+            @Override  //对网页中超链接按钮的响应
+            public boolean shouldOverrideUrlLoading(WebView webView, String s) {
+                return super.shouldOverrideUrlLoading(webView, s);
+            }
+
+            @Override
+            public void onPageFinished(WebView webView, String s) {
+                super.onPageFinished(webView, s);
+            }
+        });
         adapter = new MovieAdapter(this);
         recyclerView.setAdapterWithProgress(adapter);
         adapter.setMore(R.layout.view_more, this);
@@ -93,9 +106,10 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
 //                Intent intent=new Intent(MovieActivity.this, PlayMovieActivity.class);
 //                intent.putExtra("url",adapter.getAllData().get(position).getMovie_api());
 //                startActivity(intent);
-                initMovieData(ConstantApi.Movie_Number_Path + list.get(position).getMovie_api());
+                initMovieData(list.get(position).getMovie_api());
             }
         });
+        mainPaths = getIntent().getStringExtra("mainPaths");
         recyclerView.setRefreshListener(this);  //下拉刷新
 //        adapter.addAll(list);
         onRefresh();
@@ -118,55 +132,92 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
 
     private void initData() {
         String path = getIntent().getStringExtra("url");
+        LogUtil.m("播放地址" + path);
         try {
             OkHttpUtils
                     .get()
                     .url(path)
                     .build()
                     .execute(new StringCallback() {
-                        @Override
-                        public void onError(Call call, Exception e, int id) {
-                            if (page == 1) {
-                                adapter.clear();
-                                list.clear();
+                                 @Override
+                                 public void onError(Call call, Exception e, int id) {
+                                     if (page == 1) {
+                                         adapter.clear();
+                                         list.clear();
 
-                            } else {
+                                     } else {
 
-                                adapter.stopMore();
-                            }
-                        }
+                                         adapter.stopMore();
+                                     }
+                                 }
 
-                        @Override
-                        public void onResponse(String string, int id) {
-                            try {
-                                if (page == 1) {//暂无数据
-                                    adapter.clear();
-                                    list.clear();
-                                }
+                                 @Override
+                                 public void onResponse(String string, int id) {
+                                     try {
+                                         if (page == 1) {//暂无数据
+                                             adapter.clear();
+                                             list.clear();
+                                         }
 
-                                Document doc = Jsoup.parse(string);
-                                Elements links = doc.select("DIV.c-box");
-                                Elements elements = links.select("LI");
-                                for (Element element : elements) {
-                                    MovieBean bean = new MovieBean();
-                                    bean.setMovie_title(element.select("A").attr("title"));
-                                    bean.setMovie_api(element.select("A").attr("href"));
-                                    LogUtil.m("视频名称" + element.select("A").attr("title"));
-                                    LogUtil.m("视频接口" + element.select("A").attr("href"));
-                                    list.add(bean);
+                                         Document doc = Jsoup.parse(string);
+                                         switch (getIntent().getIntExtra("index", -1)) {
 
-                                }
-                                adapter.addAll(list);
-                            } catch (Exception e) {
-                                adapter.stopMore();
-                                e.printStackTrace();
+                                             case 1:
+                                                 Elements links = doc.select("div.plist").select("ul.list_tab_img");
+                                                 Elements elements = links.select("li");
+                                                 for (Element element : elements) {
+                                                     MovieBean bean = new MovieBean();
+                                                     LogUtil.m("视频地址" + mainPaths + element.select("a").attr("href"));
+                                                     bean.setMovie_api(mainPaths + element.select("a").attr("href"));
+                                                     String movieTitle = element.select("label").text();
+                                                     LogUtil.m("视频名称" + movieTitle);
+                                                     bean.setMovie_title(movieTitle);
+                                                     list.add(bean);
+                                                 }
+                                                 initMovieData(list.get(0).getMovie_api());
+                                                 break;
+                                             case 2:
 
-                            }
+                                                 Document docs = Jsoup.parse(string);
+                                                 String linkss = docs.select("iframe").attr("src");
+                                                 LogUtil.m("标志位2 "+ConstantApi.Play_Path+linkss);
+                                                 mWebView.loadUrl(ConstantApi.Play_Path+linkss);
+
+                                                 break;
+                                             case -1:
+                                                 Elements links1 = doc.select("DIV.c-box");
+                                                 Elements elements1 = links1.select("LI");
+                                                 for (Element element : elements1) {
+                                                     MovieBean bean = new MovieBean();
+                                                     bean.setMovie_title(element.select("A").attr("title"));
+                                                     bean.setMovie_api(ConstantApi.Movie_Number_Path + element.select("A").attr("href"));
+                                                     LogUtil.m("视频名称" + element.select("A").attr("title"));
+                                                     LogUtil.m("视频接口" + ConstantApi.Movie_Number_Path + element.select("A").attr("href"));
+                                                     list.add(bean);
+
+                                                 }
+                                                 initMovieData(list.get(0).getMovie_api());
+                                                 break;
+                                             default:
+
+                                                 break;
+
+                                         }
 
 
-                        }
+                                         adapter.addAll(list);
+                                     } catch (Exception e) {
+                                         adapter.stopMore();
+                                         e.printStackTrace();
 
-                    });
+                                     }
+
+
+                                 }
+
+                             }
+
+                    );
 //        initMovieData(Constant.Movie_Number_Path + list.get(0).getMovie_api());
         } catch (Exception e) {
             adapter.stopMore();
@@ -197,8 +248,16 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
 //                            hideProgress();
                             Document doc = Jsoup.parse(string);
                             String links = doc.select("iframe").attr("src");
+                            if (getIntent().getIntExtra("index", -1) == -1) {
+                                mWebView.loadUrl(links);
+
+                            } else {
+
+                                mWebView.loadUrl(ConstantApi.Play_Path + links);
+                            }
+
 //                            mWebView.loadData(string, HtmlUtil.MIME_TYPE, HtmlUtil.ENCODING);
-                            mWebView.loadUrl(links);
+
                         } catch (Exception e) {
                             e.printStackTrace();
 
@@ -209,6 +268,7 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
 
 
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 

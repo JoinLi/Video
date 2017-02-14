@@ -68,10 +68,10 @@ public class MainActivity extends AppCompatActivity {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(IndexFragment.newInstance(), "首页");
-        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Sh_Path,ConstantApi.Movie_Sh_Path,ConstantApi.Qy_Path), "搜狐");
-//        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Qy_Path,ConstantApi.Movie_Qy_Path,ConstantApi.Qy_Path), "爱奇艺");
-//        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Qy_Path,ConstantApi.Movie_Qy_Path,ConstantApi.Qy_Path), "乐视");
-//        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Qy_Path,ConstantApi.Movie_Qy_Path,ConstantApi.Qy_Path), "芒果");
+        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Sh_Path,ConstantApi.Movie_Sh_Path,ConstantApi.Sh_Path), "搜狐");
+        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Qy_Path,ConstantApi.Movie_Qy_Path,ConstantApi.Qy_Path), "爱奇艺");
+        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Ls_Path,ConstantApi.Movie_Ls_Path,ConstantApi.Ls_Path), "乐视");
+        adapter.addFragment(SouhuFragment.newInstance(ConstantApi.Tv_Mg_Path,ConstantApi.Movie_Mg_Path,ConstantApi.Mg_Path), "芒果");
         viewPager.setAdapter(adapter);
         viewPager.setCurrentItem(0);
         viewPager.setOffscreenPageLimit(adapter.getCount());
