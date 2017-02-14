@@ -53,10 +53,11 @@
                 android:textSize="@dimen/text_body" />
 
             <TextView
+                android:id="@+id/text_update"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:text="@string/setting_notify_subtitle"
+                android:text="@string/setting_close_update"
                 android:textSize="@dimen/text_tag" />
 
             <CheckBox

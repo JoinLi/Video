@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">"视频间谍"</string>
+    <string name="app_name">"视频解析"</string>
     <string name="action_settings">设置</string>
     <string name="sousuo">请输入要搜索的内容</string>
     <string name="snackbar_context">搜索数据不能为空</string>
@@ -12,7 +12,8 @@
 
     <string name="setting_normal">常规</string>
     <string name="setting_notify">自动更新</string>
-    <string name="setting_notify_subtitle">软件已开启自动更新</string>
+    <string name="setting_open_update">软件已开启自动更新</string>
+    <string name="setting_close_update">软件已关闭自动更新</string>
     <string name="setting_about_android">关于软件</string>
     <string name="setting_about_me">月下独酌</string>
     <string name="setting_update_title">客户端更新</string>

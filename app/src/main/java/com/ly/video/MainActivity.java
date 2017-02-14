@@ -13,12 +13,13 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.ly.video.activity.SettingActivity;
+import com.ly.video.activity.Updae_MainActivity;
 import com.ly.video.adapter.ViewPagerAdapter;
 import com.ly.video.bean.ConstantApi;
 import com.ly.video.fragment.IndexFragment;
 import com.ly.video.fragment.SouhuFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Updae_MainActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
@@ -27,13 +28,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-
+        CheckNewestVersion();
     }
 
     private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);

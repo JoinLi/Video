@@ -39,5 +39,7 @@ public class ConstantApi {
     //芒果tv
     public static final String Tv_Mg_Path =Mg_Path+"mglist.php?remen=&fenlei=&page=";
 
+    public static final String UpdateUrl ="https://raw.githubusercontent.com/JoinLi/index/master/update.txt";
+
 
 }

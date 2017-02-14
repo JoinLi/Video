@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.TextView;
 
 import com.ly.video.R;
 
@@ -19,6 +20,7 @@ import com.ly.video.R;
 
 public class SettingActivity extends AppCompatActivity {
 private CheckBox notify_checkbox;
+    private TextView text_update;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +39,15 @@ private CheckBox notify_checkbox;
             mActionBar.setHomeButtonEnabled(true);
             mActionBar.setDisplayHomeAsUpEnabled(true);
         }
+        text_update= (TextView) findViewById(R.id.text_update);
         notify_checkbox= (CheckBox) findViewById(R.id.notify_checkbox);
         notify_checkbox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (notify_checkbox.isChecked()){
-
+                    text_update.setText(getString(R.string.setting_open_update));
+                }else{
+                    text_update.setText(getString(R.string.setting_close_update));
                 }
             }
         });

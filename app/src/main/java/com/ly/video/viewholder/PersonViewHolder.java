@@ -33,7 +33,7 @@ public class PersonViewHolder extends BaseViewHolder<InforBean> {
 //        mTv_sign.setText(person.getMovie_url());
         Glide.with(getContext())
                 .load(person.getImg_url())
-                .placeholder(R.mipmap.ic_launcher)
+                .placeholder(R.mipmap.img_err)
                 .into(mImg_face);
     }
 
