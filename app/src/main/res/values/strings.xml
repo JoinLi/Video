@@ -1,9 +1,13 @@
 <resources>
     <string name="app_name">"视频解析"</string>
     <string name="action_settings">设置</string>
+    <string name="action_tv">电视剧</string>
+    <string name="action_movie">电影</string>
     <string name="sousuo">请输入要搜索的内容</string>
     <string name="snackbar_context">搜索数据不能为空</string>
     <string name="snackbar_err">加载失败,请尝试刷新</string>
+    <string name="search">搜索</string>
+    <string name="search_hint">搜索电影/电视剧</string>
     <!--################## 设置 ####################-->
     <string name="setting">设置</string>
     <string name="setting_other">设计</string>

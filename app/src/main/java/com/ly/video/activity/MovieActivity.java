@@ -74,7 +74,7 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         mWebView.getView().setOverScrollMode(View.OVER_SCROLL_ALWAYS);
         mWebView.setDrawingCacheEnabled(true);
-        mWebView.setWebViewClient(new WebViewClient(){
+        mWebView.setWebViewClient(new WebViewClient() {
             @Override  //对网页中超链接按钮的响应
             public boolean shouldOverrideUrlLoading(WebView webView, String s) {
                 return super.shouldOverrideUrlLoading(webView, s);
@@ -163,6 +163,15 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
                                          switch (getIntent().getIntExtra("index", -1)) {
 
                                              case 1:
+                                                 String link_url = doc.select("iframe").attr("src");
+                                                 if (link_url.trim().startsWith("/")) {
+                                                     link_url = ConstantApi.Play_Path + link_url;
+                                                     //添加到html
+                                                     doc.select("iframe").attr("src", link_url);
+
+                                                 }
+                                                 LogUtil.m("1 vip电视剧播放地址" + link_url);
+                                                 mWebView.loadUrl(link_url);
                                                  Elements links = doc.select("div.plist").select("ul.list_tab_img");
                                                  Elements elements = links.select("li");
                                                  for (Element element : elements) {
@@ -174,29 +183,37 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
                                                      bean.setMovie_title(movieTitle);
                                                      list.add(bean);
                                                  }
-                                                 initMovieData(list.get(0).getMovie_api());
+//                                                 initMovieData(list.get(0).getMovie_api());
                                                  break;
                                              case 2:
 
                                                  Document docs = Jsoup.parse(string);
                                                  String linkss = docs.select("iframe").attr("src");
-                                                 LogUtil.m("标志位2 "+ConstantApi.Play_Path+linkss);
-                                                 mWebView.loadUrl(ConstantApi.Play_Path+linkss);
+                                                 if (linkss.trim().startsWith("/")) {
+                                                     linkss = ConstantApi.Play_Path + linkss;
+                                                     //添加到html
+                                                     docs.select("iframe").attr("src", linkss);
+
+                                                 }
+                                                 LogUtil.m("2 vip电影播放地址 " + linkss);
+                                                 mWebView.loadUrl(linkss);
 
                                                  break;
-                                             case -1:
+                                             case 3:
                                                  Elements links1 = doc.select("DIV.c-box");
                                                  Elements elements1 = links1.select("LI");
                                                  for (Element element : elements1) {
                                                      MovieBean bean = new MovieBean();
                                                      bean.setMovie_title(element.select("A").attr("title"));
                                                      bean.setMovie_api(ConstantApi.Movie_Number_Path + element.select("A").attr("href"));
-                                                     LogUtil.m("视频名称" + element.select("A").attr("title"));
-                                                     LogUtil.m("视频接口" + ConstantApi.Movie_Number_Path + element.select("A").attr("href"));
+                                                     LogUtil.m("首页视频名称" + element.select("A").attr("title"));
+                                                     LogUtil.m("首页视频接口" + ConstantApi.Movie_Number_Path + element.select("A").attr("href"));
                                                      list.add(bean);
 
                                                  }
+                                                 LogUtil.m("3 首页播放地址 " + list.get(0).getMovie_api());
                                                  initMovieData(list.get(0).getMovie_api());
+
                                                  break;
                                              default:
 
@@ -218,15 +235,11 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
                              }
 
                     );
-//        initMovieData(Constant.Movie_Number_Path + list.get(0).getMovie_api());
         } catch (Exception e) {
             adapter.stopMore();
             e.printStackTrace();
 
         }
-
-
-//        LogUtil.m(Constant.Movie_Number_Path + adapter.getAllData().get(0).getMovie_api());
     }
 
 
@@ -248,10 +261,11 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
 //                            hideProgress();
                             Document doc = Jsoup.parse(string);
                             String links = doc.select("iframe").attr("src");
-                            if (getIntent().getIntExtra("index", -1) == -1) {
+
+                            if (getIntent().getIntExtra("index", -1) == 3) { //首页数据
                                 mWebView.loadUrl(links);
 
-                            } else {
+                            } else {  //其他vip数据
 
                                 mWebView.loadUrl(ConstantApi.Play_Path + links);
                             }

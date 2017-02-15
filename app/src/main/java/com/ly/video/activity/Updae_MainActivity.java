@@ -39,7 +39,6 @@ public class Updae_MainActivity extends AppCompatActivity {
     private String m_appPath; // 下载地址
     private String m_update; // 更新说明
     private MaterialDialog updateDialog;
-    private Boolean index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

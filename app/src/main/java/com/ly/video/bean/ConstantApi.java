@@ -39,6 +39,11 @@ public class ConstantApi {
     //芒果tv
     public static final String Tv_Mg_Path =Mg_Path+"mglist.php?remen=&fenlei=&page=";
 
+    //其他电影
+    public static final String Movie_Other_Path = Movie_Number_Path+"list.php?page=";
+    //其他电视剧
+    public static final String Tv_Other_Path =Movie_Number_Path+ "mjlist.php?remen=3&fenlei=&page=";
+    //版本更新
     public static final String UpdateUrl ="https://raw.githubusercontent.com/JoinLi/index/master/update.txt";
 
 

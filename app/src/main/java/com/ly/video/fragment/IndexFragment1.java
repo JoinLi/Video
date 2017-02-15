@@ -2,12 +2,13 @@ package com.ly.video.fragment;
 
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
+import android.text.TextUtils;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.jude.easyrecyclerview.EasyRecyclerView;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
@@ -35,53 +36,36 @@ import okhttp3.Call;
  * @Date: 2016/7/9.
  * @description:
  */
-public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.OnLoadMoreListener, SwipeRefreshLayout.OnRefreshListener, View.OnClickListener {
+public class IndexFragment1 extends BaseFragment implements RecyclerArrayAdapter.OnLoadMoreListener, SwipeRefreshLayout.OnRefreshListener {
+    public static final String TITLE = "首页";
     private EasyRecyclerView recyclerView;
     private PersonAdapter adapter;
     private List<InforBean> list = new ArrayList<InforBean>();
+    private EditText mClearEditText;
+    private String context = "鬼吹灯";
+    private ImageView ic_search;
     private int page;
-    private String tvPaths, moviePaths, mainPaths;
-    private String path;
-    private TextView text_tv, text_movie;
-    private int index = 1; //标志位，判断是电影还是电视剧
 
-    /**
-     * @param tvPath    电视剧接口
-     * @param moviePath 电影接口
-     * @param mainPath  观看接口
-     * @return
-     */
-    public static SouhuFragment newInstance(String tvPath, String moviePath, String mainPath) {
-        SouhuFragment fragment = new SouhuFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("tvPath", tvPath);
-        bundle.putString("moviePath", moviePath);
-        bundle.putString("mainPath", mainPath);
-        fragment.setArguments(bundle);
+    public static IndexFragment1 newInstance() {
+        IndexFragment1 fragment = new IndexFragment1();
         return fragment;
     }
 
 
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_vip;
+        return R.layout.fragment_index;
     }
 
     @Override
     protected void initView() {
-        Bundle args = getArguments();
-        if (args != null) {
-            tvPaths = args.getString("tvPath");
-            moviePaths = args.getString("moviePath");
-            mainPaths = args.getString("mainPath");
-        }
+        mClearEditText = findView(R.id.filter_edit_qd);
         recyclerView = findView(R.id.recyclerView);
+        ic_search = findView(R.id.ic_search);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2, GridLayoutManager.VERTICAL, false));
 //        DividerDecoration itemDecoration = new DividerDecoration(Color.GRAY, Util.dip2px(this, 0.5f), Util.dip2px(this, 72), 0);
 //        itemDecoration.setDrawLastItem(false);
 //        recyclerView.addItemDecoration(itemDecoration);
-        text_tv = findView(R.id.text_tv);
-        text_movie = findView(R.id.text_movie);
         adapter = new PersonAdapter(getContext());
         recyclerView.setAdapterWithProgress(adapter);
         adapter.setMore(R.layout.view_more, this);
@@ -97,35 +81,62 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
                 adapter.resumeMore();
             }
         });
+        ic_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String edContext = mClearEditText.getText().toString().trim();
+                filterData(edContext.toString());
+            }
+        });
 
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-                Intent intent = new Intent(getContext(), MovieActivity.class);
-                intent.putExtra("url", mainPaths + adapter.getAllData().get(position).getMovie_url());
-                intent.putExtra("index", index);
-                intent.putExtra("mainPaths", mainPaths);
+                Intent intent = new Intent(getActivity(), MovieActivity.class);
+                intent.putExtra("url", ConstantApi.Movie_Number_Path+adapter.getAllData().get(position).getMovie_url());
                 startActivity(intent);
             }
         });
-        text_tv.setOnClickListener(this);
-        text_movie.setOnClickListener(this);
-        path = tvPaths;
-        text_tv.setTextColor(getActivity().getColor(R.color.colorPrimary));
+        list.clear();
+        adapter.clear();
+        adapter.addAll(list);
         recyclerView.setRefreshListener(this);  //下拉刷新
 
     }
 
     @Override
     protected void initData() {
-        onRefresh();
+
+    }
+
+
+    /**
+     * 根据输入框中的值来过滤数据并更新ListView
+     *
+     * @param filterStr
+     */
+    private void filterData(String filterStr) {
+        LogUtil.m("执行了");
+
+        if (TextUtils.isEmpty(filterStr)) {
+
+            Snackbar.make(getView(), getResources().getString(R.string.snackbar_context), Snackbar.LENGTH_LONG)
+                    .show();
+
+
+        } else {
+            context = filterStr;
+            page = 1;
+            onRefresh();
+
+        }
+
+
     }
 
     @Override
     public void onLoadMore() {
-        page++;
-        list.clear();
-        getMovie();
+        adapter.stopMore();
     }
 
     @Override
@@ -135,39 +146,14 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
 
     }
 
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.text_tv:
-                text_tv.setTextColor(getActivity().getColor(R.color.colorPrimary));
-                text_movie.setTextColor(getActivity().getColor(R.color.black_normal));
-                index = 1;
-                path = tvPaths;
-                break;
-            case R.id.text_movie:
-                text_tv.setTextColor(getActivity().getColor(R.color.black_normal));
-                text_movie.setTextColor(getActivity().getColor(R.color.colorPrimary));
-                index = 2;
-                path = moviePaths;
-                break;
-            default:
-
-                break;
-        }
-        onRefresh();
-    }
-
 
     private void getMovie() {
-//        recyclerView.showProgress();
-//        String path = ConstantApi.Movie_Qy_Path+page;
+        recyclerView.showProgress();
+        String path = ConstantApi.Movie_Sou_Path + context;
         try {
-            if (page == 1) {
-                recyclerView.showProgress();
-            }
-            LogUtil.m("请求地址" + path + page);
             OkHttpUtils
                     .get()
-                    .url(path + page)
+                    .url(path)
                     .build()
                     .execute(new StringCallback() {
                         @Override
@@ -182,17 +168,14 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
                             }
                             Snackbar.make(getView(), getResources().getString(R.string.snackbar_err), Snackbar.LENGTH_LONG)
                                     .show();
-                            LogUtil.m("出错" + call);
                         }
 
                         @Override
                         public void onResponse(String string, int id) {
                             try {
-
                                 if (page == 1) {//暂无数据
                                     adapter.clear();
                                     list.clear();
-
                                 }
 
                                 Document doc = Jsoup.parse(string);
@@ -201,13 +184,7 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
                                 for (Element element : elements) {
                                     InforBean bean = new InforBean();
                                     bean.setMovie_url(element.select("a").attr("href"));
-                                    String imgUrl = element.select("img").attr("src");
-                                    if (imgUrl.trim().startsWith("/")) {
-                                        imgUrl = ConstantApi.Img_Path + imgUrl;
-                                        //添加到html
-                                        element.select("img").attr("src", imgUrl);
-                                    }
-                                    bean.setImg_url(imgUrl);
+                                    bean.setImg_url(element.select("img").attr("src"));
                                     bean.setTitle(element.select("b").text());
                                     element.select("b").text();
                                     LogUtil.m("链接" + element.select("a").attr("href"));
@@ -233,10 +210,9 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
             e.printStackTrace();
 
         }
-        if (page == 1) {
-            recyclerView.cancelLongPress();
-        }
-//        recyclerView.cancelLongPress();
+
+        recyclerView.cancelLongPress();
     }
+
 
 }

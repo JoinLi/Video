@@ -16,7 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+            app:layout_scrollFlags="scroll|enterAlways" />
+
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
@@ -33,9 +34,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <!-- 设置layout_behavior属性后，这个布局会自动移动到Toolbar以下-->
+
 
     </android.support.v4.view.ViewPager>
+
     <com.lapism.searchview.SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
