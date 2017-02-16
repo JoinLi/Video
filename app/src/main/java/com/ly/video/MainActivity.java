@@ -1,6 +1,7 @@
 package com.ly.video;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -39,7 +40,12 @@ public class MainActivity extends Updae_MainActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initView();
-        CheckNewestVersion();
+        SharedPreferences share = getSharedPreferences("setting", MODE_PRIVATE);
+        boolean isRem = share.getBoolean("checked", false);
+        if (isRem) {
+            CheckNewestVersion();
+        }
+
     }
 
     private void initView() {
@@ -66,6 +72,7 @@ public class MainActivity extends Updae_MainActivity {
                 public boolean onQueryTextSubmit(String query) {
 
                     getData(query, 0);
+
                     searchView.close(true);
                     return true;
                 }
@@ -114,10 +121,12 @@ public class MainActivity extends Updae_MainActivity {
             }
         }
     }
+
     protected void getData(String text, int position) {
         historyTable.addItem(new SearchItem(text));
 
         Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+        intent.putExtra("context", text);
 //        intent.putExtra(EXTRA_KEY_VERSION, SearchView.VERSION_TOOLBAR);
 //        intent.putExtra(EXTRA_KEY_VERSION_MARGINS, SearchView.VERSION_MARGINS_TOOLBAR_SMALL);
 //        intent.putExtra(EXTRA_KEY_THEME, SearchView.THEME_LIGHT);
@@ -125,6 +134,7 @@ public class MainActivity extends Updae_MainActivity {
         startActivity(intent);
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

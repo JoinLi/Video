@@ -34,7 +34,8 @@
         <activity
             android:name=".activity.MovieActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
-        <activity android:name=".activity.SearchActivity" />
+        <activity android:name=".activity.SearchActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
