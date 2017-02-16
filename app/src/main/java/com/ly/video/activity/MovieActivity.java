@@ -1,8 +1,8 @@
 package com.ly.video.activity;
-
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
+import android.widget.ProgressBar;
 
 import com.jude.easyrecyclerview.EasyRecyclerView;
 import com.jude.easyrecyclerview.adapter.RecyclerArrayAdapter;
@@ -25,7 +27,6 @@ import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -44,7 +45,7 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
     private List<MovieBean> list = new ArrayList<MovieBean>();
     private int page = 1;
     private String mainPaths;
-
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +61,8 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+        progressBar= (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setMax(100);
         recyclerView = (EasyRecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         DividerDecoration itemDecoration = new DividerDecoration(Color.GRAY, Util.dip2px(this, 0.5f), Util.dip2px(this, 72), 0);
@@ -85,6 +88,16 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
                 super.onPageFinished(webView, s);
             }
         });
+        mWebView.setWebChromeClient(new com.tencent.smtt.sdk.WebChromeClient(){
+            @Override
+            public void onProgressChanged(WebView webView, int i) {
+                super.onProgressChanged(webView, i);
+                progressBar.setProgress(i);
+                if (i==progressBar.getMax()){
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+        });
         adapter = new MovieAdapter(this);
         recyclerView.setAdapterWithProgress(adapter);
         adapter.setMore(R.layout.view_more, this);
@@ -103,9 +116,8 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
         adapter.setOnItemClickListener(new RecyclerArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
-//                Intent intent=new Intent(MovieActivity.this, PlayMovieActivity.class);
-//                intent.putExtra("url",adapter.getAllData().get(position).getMovie_api());
-//                startActivity(intent);
+                progressBar.setProgress(3);
+                progressBar.setVisibility(View.VISIBLE);
                 initMovieData(list.get(position).getMovie_api());
             }
         });
@@ -128,7 +140,6 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
         initData();
 
     }
-
 
     private void initData() {
         String path = getIntent().getStringExtra("url");
@@ -257,8 +268,6 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
                     @Override
                     public void onResponse(String string, int id) {
                         try {
-//                            String htmlData = subString(string);
-//                            hideProgress();
                             Document doc = Jsoup.parse(string);
                             String links = doc.select("iframe").attr("src");
 
@@ -269,8 +278,6 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
 
                                 mWebView.loadUrl(ConstantApi.Play_Path + links);
                             }
-
-//                            mWebView.loadData(string, HtmlUtil.MIME_TYPE, HtmlUtil.ENCODING);
 
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -24,6 +24,12 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:id="@+id/progressBar"
+            />
 
         <com.tencent.smtt.sdk.WebView
             android:id="@+id/notice_web_view"

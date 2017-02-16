@@ -128,7 +128,10 @@ public class IndexFragment extends BaseFragment implements RecyclerArrayAdapter.
     }
 
     private void getMovie() {
-        recyclerView.showProgress();
+        if (page == 1) {
+            recyclerView.showProgress();
+        }
+
         try {
             OkHttpUtils
                     .get()
@@ -189,8 +192,10 @@ public class IndexFragment extends BaseFragment implements RecyclerArrayAdapter.
             e.printStackTrace();
 
         }
+        if (page == 1) {
+            recyclerView.cancelLongPress();
+        }
 
-        recyclerView.cancelLongPress();
     }
 
 
