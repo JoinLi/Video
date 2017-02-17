@@ -47,4 +47,5 @@ public class ConstantApi {
     public static final String UpdateUrl ="https://raw.githubusercontent.com/JoinLi/index/master/update.txt";
 
 
+
 }

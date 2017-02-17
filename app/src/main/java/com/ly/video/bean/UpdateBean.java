@@ -4,10 +4,11 @@ import java.util.List;
 
 public class UpdateBean {
 
+
     /**
      * rs_code : 1000
      * totalRecordCount : 1
-     * mydata : [{"versionCode":"2","versionName":"1.2","bbmingcheng":"修复已经bug，增加其他功能","dizhi":"http://jk.webbiao.com/cxb/201728554179412.apk"}]
+     * mydata : [{"versionCode":2,"versionName":"1.2","bbmingcheng":"修复已知bug，新增友盟sdk","dizhi":"http://jk.webbiao.com/cxb/201728554179412.apk"}]
      */
 
     private String rs_code;
@@ -15,7 +16,7 @@ public class UpdateBean {
     /**
      * versionCode : 2
      * versionName : 1.2
-     * bbmingcheng : 修复已经bug，增加其他功能
+     * bbmingcheng : 修复已知bug，新增友盟sdk
      * dizhi : http://jk.webbiao.com/cxb/201728554179412.apk
      */
 

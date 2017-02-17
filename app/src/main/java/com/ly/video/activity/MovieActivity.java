@@ -1,8 +1,8 @@
 package com.ly.video.activity;
+
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
-
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebChromeClient;
 import android.widget.ProgressBar;
 
 import com.jude.easyrecyclerview.EasyRecyclerView;
@@ -27,6 +26,7 @@ import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -46,6 +46,7 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
     private int page = 1;
     private String mainPaths;
     private ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,14 +55,14 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
     }
 
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("视频选择");
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-        progressBar= (ProgressBar) findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setMax(100);
         recyclerView = (EasyRecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -88,12 +89,12 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
                 super.onPageFinished(webView, s);
             }
         });
-        mWebView.setWebChromeClient(new com.tencent.smtt.sdk.WebChromeClient(){
+        mWebView.setWebChromeClient(new com.tencent.smtt.sdk.WebChromeClient() {
             @Override
             public void onProgressChanged(WebView webView, int i) {
                 super.onProgressChanged(webView, i);
                 progressBar.setProgress(i);
-                if (i==progressBar.getMax()){
+                if (i == progressBar.getMax()) {
                     progressBar.setVisibility(View.GONE);
                 }
             }
@@ -119,6 +120,8 @@ public class MovieActivity extends AppCompatActivity implements RecyclerArrayAda
                 progressBar.setProgress(3);
                 progressBar.setVisibility(View.VISIBLE);
                 initMovieData(list.get(position).getMovie_api());
+                toolbar.setTitle("正在播放" + "\"" + list.get(position).getMovie_title() + "\"");
+                setSupportActionBar(toolbar);
             }
         });
         mainPaths = getIntent().getStringExtra("mainPaths");

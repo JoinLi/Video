@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.util.Log;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -64,17 +65,24 @@ public class Updae_MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String response, int id) {
-                        Gson gson = new Gson();
-                        UpdateBean updateBean = gson.fromJson(response, UpdateBean.class);
-                        m_newVerName = updateBean.getMydata().get(0).getVersionName();
-                        m_newVerCode = updateBean.getMydata().get(0).getVersionCode();
-                        m_appPath = updateBean.getMydata().get(0).getDizhi();
-                        m_update=updateBean.getMydata().get(0).getBbmingcheng();
-                        LogUtil.m("版本名称"+m_newVerName+ "版本号" + m_newVerCode+"下载地址"+m_appPath);
-                        int vercode = getVerCode(getApplicationContext()); //
-                        if (m_newVerCode > vercode) {
-                            LogUtil.m("更新新版本+m_newVerCode" );
-                            doNewVersionUpdate(); // 更新新版本
+                        try {
+                            LogUtil.m(response);
+                            Gson gson = new Gson();
+                            UpdateBean updateBean = gson.fromJson(response, UpdateBean.class);
+                            m_newVerName = updateBean.getMydata().get(0).getVersionName();
+                            m_newVerCode = updateBean.getMydata().get(0).getVersionCode();
+                            m_appPath = updateBean.getMydata().get(0).getDizhi();
+                            m_update=updateBean.getMydata().get(0).getBbmingcheng();
+                            LogUtil.m("版本名称"+m_newVerName+ "版本号" + m_newVerCode+"下载地址"+m_appPath);
+                            int vercode = getVerCode(getApplicationContext()); //
+                            if (m_newVerCode > vercode) {
+                                LogUtil.m("更新新版本+m_newVerCode" );
+                                doNewVersionUpdate(); // 更新新版本
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+
                         }
 
                     }
