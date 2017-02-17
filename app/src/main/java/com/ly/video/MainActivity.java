@@ -25,6 +25,7 @@ import com.ly.video.adapter.ViewPagerAdapter;
 import com.ly.video.bean.ConstantApi;
 import com.ly.video.fragment.IndexFragment;
 import com.ly.video.fragment.SouhuFragment;
+import com.umeng.analytics.MobclickAgent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -202,4 +203,15 @@ public class MainActivity extends Updae_MainActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
 }

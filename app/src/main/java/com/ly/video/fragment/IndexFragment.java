@@ -16,6 +16,7 @@ import com.ly.video.activity.MovieActivity;
 import com.ly.video.adapter.PersonAdapter;
 import com.ly.video.bean.InforBean;
 import com.ly.video.util.LogUtil;
+import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -219,5 +220,14 @@ public class IndexFragment extends BaseFragment implements RecyclerArrayAdapter.
                 break;
         }
         onRefresh();
+    }
+
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(getActivity());
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(getActivity());
     }
 }

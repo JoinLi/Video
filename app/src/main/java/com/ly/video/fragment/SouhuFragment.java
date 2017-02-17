@@ -17,6 +17,7 @@ import com.ly.video.adapter.PersonAdapter;
 import com.ly.video.bean.ConstantApi;
 import com.ly.video.bean.InforBean;
 import com.ly.video.util.LogUtil;
+import com.umeng.analytics.MobclickAgent;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.StringCallback;
 
@@ -238,5 +239,12 @@ public class SouhuFragment extends BaseFragment implements RecyclerArrayAdapter.
         }
 //        recyclerView.cancelLongPress();
     }
-
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(getActivity());
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(getActivity());
+    }
 }

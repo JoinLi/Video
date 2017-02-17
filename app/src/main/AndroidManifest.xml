@@ -36,6 +36,8 @@
             android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity android:name=".activity.SearchActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <meta-data android:value="58a6aec3a325115dd30017d7" android:name="UMENG_APPKEY"/>
+        <meta-data android:value="joinli" android:name="UMENG_CHANNEL"/>
     </application>
 
 </manifest>
